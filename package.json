@@ -1,0 +1,35 @@
+{
+  "name": "node-php-session-unserialize",
+  "version": "0.1.0",
+  "description": "For unserialize PHP session in redis into JSON",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test,js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ALiangLiang/node-php-session-unserialize.git"
+  },
+  "keywords": [
+    "php",
+    "session",
+    "redis",
+    "unserialize",
+    "unserializer",
+    "serialize"
+  ],
+  "author": "ALiangLiang",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/ALiangLiang/node-php-session-unserialize/issues"
+  },
+  "homepage": "https://github.com/ALiangLiang/node-php-session-unserialize#readme",
+  "dependencies": {
+    "lodash": "^4.17.4"
+  }
+}
