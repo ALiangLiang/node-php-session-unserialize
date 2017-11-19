@@ -41,3 +41,8 @@ $ npm test
 ## TODO
 
 - Much clear error handle.
+- Browser support.
+
+## License
+
+[MIT](LICENSE)
