@@ -4,7 +4,8 @@
   "description": "For unserialize PHP session in redis into JSON",
   "main": "index.js",
   "scripts": {
-    "test": "node test,js"
+    "test": "mocha test.js",
+    "lint": "eslint --fix ."
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,17 @@
     "url": "https://github.com/ALiangLiang/node-php-session-unserialize/issues"
   },
   "homepage": "https://github.com/ALiangLiang/node-php-session-unserialize#readme",
-  "dependencies": {
-    "lodash": "^4.17.4"
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^4.11.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-mocha": "^4.11.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "lodash": "^4.17.4",
+    "mocha": "^4.0.1"
   }
 }

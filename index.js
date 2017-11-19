@@ -1,215 +1,157 @@
-function readKey(text) {
-  var index = text.indexOf('|')
-  var key = text.substr(0, index)
-  var leftText = text.substr(index + 1)
-  //console.log('readKey', leftText)
-  return {
-    value: key,
-    leftText: leftText
+function readUntil (array, keywords) {
+  if (typeof keywords === 'string') {
+    keywords = [keywords]
   }
+  var value = ''
+  while (array.length && keywords.indexOf(array[0]) === -1) {
+    value += array.shift()
+    array.offset += 1
+  }
+  array.shift()
+  array.offset += 1
+  return value
 }
 
-function readType(text) {
-  var index = text.indexOf(':')
-  // When type is N(null), it's like "N;". No ":".
-  if(index === -1)
-    index = text.indexOf(';')
-  var type = text.substr(0, index)
-  var leftText = text.substr(index + 1)
-  //console.log('readType', leftText)
-  return {
-    value: type,
-    leftText: leftText
-  }
+function readString (array) {
+  readUntil(array, ':')
+  readUntil(array, '"')
+  var string = readUntil(array, '"')
+  readUntil(array, ';')
+  // console.log('readString', leftText)
+  return string
 }
 
-function readLength(text) {
-  var index = text.indexOf(':')
-  var length = Number(text.substr(0, index))
-  if(Number.isNaN(length))
-    throw new Error('Parse error: ' + length + ' is not a length.')
-  var leftText = text.substr(index + 1)
-  //console.log('readLength', leftText)
-  return {
-    value: length,
-    leftText: leftText
-  }
-}
-
-function readString(text) {
-  var lengthAndText = readLength(text)
-  // Shift out first quote.
-  text = lengthAndText.leftText.substr(1)
-  // Find another quote.
-  var index = text.indexOf('"')
-  var string = text.substr(0, index)
-  var leftText = text.substr(index + 2)
-  //console.log('readString', leftText)
-  return {
-    value: string,
-    leftText: leftText
-  }
-}
-
-function readNumber(text) {
-  var index = text.indexOf(';')
-  var number = Number(text.substr(0, index))
-  if(Number.isNaN(number))
+function readNumber (array) {
+  var number = Number(readUntil(array, ';'))
+  if (Number.isNaN(number)) {
     throw new Error('Parse error: ' + number + ' is not a number.')
-  var leftText = text.substr(index + 1)
-  //console.log('readNumber', leftText)
-  return {
-    value: number,
-    leftText: leftText
   }
+  // console.log('readNumber', leftText)
+  return number
 }
 
-function readBoolean(text) {
-  var index = text.indexOf(';')
-  var boolean = Number(text.substr(0, index))
-  if(Number.isNaN(boolean) || (boolean !== 0 && boolean !== 1))
+function readBoolean (array) {
+  var boolean = Number(readUntil(array, ';'))
+  if (Number.isNaN(boolean) || (boolean !== 0 && boolean !== 1)) {
     throw new Error('Parse error: ' + boolean + ' is not a boolean number.')
-  var leftText = text.substr(index + 1)
-  //console.log('readBoolean', leftText)
-  return {
-    value: !!boolean,
-    leftText: leftText
   }
+  // console.log('readBoolean', leftText)
+  return !!boolean
 }
 
-function readNull(text) {
-  return {
-    value: null,
-    leftText: text.substr(1)
-  }
+function readNull (array) {
+  return null
 }
 
-function readArray(text) {
-  var lengthAndText = readLength(text)
-  var length = lengthAndText.value
-  var leftText = lengthAndText.leftText
-  var array = []
+function readArray (array) {
+  var length = readUntil(array, ':')
+  var resultArray = []
   // Shift out first bracket.
-  leftText = leftText.substr(1)
+  readUntil(array, '{')
   for (var i = 0; i < length; i++) {
-    var keyResult = readValue(leftText)
-    leftText = keyResult.leftText
-    var valueResult = readValue(leftText)
-    leftText = valueResult.leftText
-    var obj = {}
-    obj[keyResult.value] = valueResult.value
-    array.push(obj)
+    var key = readValue(array)
+    var value = readValue(array)
+    resultArray[key] = value
   }
-  leftText = leftText.substr(1)
-  //console.log('readArray', leftText)
-  return {
-    value: array,
-    leftText: leftText
-  }
+  readUntil(array, '}')
+  // console.log('readArray', leftText)
+  return resultArray
 }
 
-function readObject(text) {
+function readObject (array) {
+  // Remove object name length.
+  readUntil(array, ':')
   // Get object name.
-  var stringResult = readString(text)
-  var leftText = stringResult.leftText
-  var objectName = stringResult.value
+  readUntil(array, '"')
+  var resultObjectName = readUntil(array, '"')
+  readUntil(array, ':')
 
-  var object = {}
-  var insideObject = object[objectName] = {}
+  var resultObject = {}
+  var insideResultObject = resultObject[resultObjectName] = {}
   // Get object length.
-  lengthAndText = readLength(leftText)
-  leftText = lengthAndText.leftText
-  var length = lengthAndText.value
+  var length = readUntil(array, ':')
   // Shift out first bracket.
-  leftText = leftText.substr(1)
+  readUntil(array, '{')
   for (var i = 0; i < length; i++) {
-    var keyResult = readValue(leftText)
-    leftText = keyResult.leftText
-    var valueResult = readValue(leftText)
-    leftText = valueResult.leftText
-    insideObject[keyResult.value] = valueResult.value
+    var key = readValue(array)
+    var value = readValue(array)
+    insideResultObject[key] = value
   }
-  leftText = leftText.substr(1)
-  //console.log('readObject', leftText)
-  return {
-    value: object,
-    leftText: leftText
-  }
+  readUntil(array, '}')
+  // console.log('readObject', leftText)
+  return resultObject
 }
 
-function readClass(text) {
+function readClass (array) {
+  // Remove class name length.
+  readUntil(array, ':')
   // Get class name.
-  var stringResult = readString(text)
-  var leftText = stringResult.leftText
-  var _className = stringResult.value
+  readUntil(array, '"')
+  var resultClassName = readUntil(array, '"')
+  readUntil(array, ':')
 
-  var _class = {}
-  var insideClass = _class[_className] = []
+  var resultClass = {}
+  var insideResultClass = resultClass[resultClassName] = []
   // Get class length.
-  var lengthAndText = readLength(leftText)
-  var length = lengthAndText.value
-  leftText = lengthAndText.leftText
+  var length = readUntil(array, ':')
   // Shift out first bracket.
-  leftText = leftText.substr(1)
+  readUntil(array, '{')
   for (var i = 0; i < length; i++) {
-    var valueResult = readValue(leftText)
-    leftText = valueResult.leftText
-    insideClass.push(valueResult.value)
+    var value = readValue(array)
+    insideResultClass.push(value)
   }
-  leftText = leftText.substr(1)
-  //console.log('readArray', leftText)
-  return {
-    value: insideClass,
-    leftText: leftText
-  }
+  readUntil(array, '}')
+  // console.log('readArray', leftText)
+  return resultClass
 }
 
-function readValue(text) {
-  var typeAndText = readType(text)
-  var type = typeAndText.value
-  switch(type.toLowerCase()) {
-    case 's':   //s:len<string>:"<string>";
-      return readString(typeAndText.leftText.trim())
-    case 'i':   //i:<integer>;
-    case 'd':   //d:<float>;
-    case 'r':   //r:<integer>;
-      return readNumber(typeAndText.leftText.trim())
-    case 'a':   //a:len<array>:{<key>;<val>.....}
-      return readArray(typeAndText.leftText.trim())
-    case 'o':   //o:len<object_class_name>:<object_class_name>:len<object>:{<key>;<val>....}
-      return readObject(typeAndText.leftText.trim())
-    case 'c':   //c:len<class_name>:"<class_name>":len<val>:{<val>}
-      return readClass(typeAndText.leftText.trim())
-    case 'b':   //b:<digit>;  digit is either 1 or 0
-      return readBoolean(typeAndText.leftText.trim())
-    case 'n':   //n; null
-      return readNull(typeAndText.leftText.trim())
+function readValue (array) {
+  var type = readUntil(array, [':', ';'])
+  switch (type.toLowerCase()) {
+    case 's': // s:len<string>:"<string>";
+      return readString(array)
+    case 'i': // i:<integer>;
+    case 'd': // d:<float>;
+    case 'r': // r:<integer>;
+      return readNumber(array)
+    case 'a': // a:len<array>:{<key>;<val>.....}
+      return readArray(array)
+    case 'o': // o:len<object_class_name>:<object_class_name>:len<object>:{<key>;<val>....}
+      return readObject(array)
+    case 'c': // c:len<class_name>:"<class_name>":len<val>:{<val>}
+      return readClass(array)
+    case 'b': // b:<digit>;  digit is either 1 or 0
+      return readBoolean(array)
+    case 'n': // n; null
+      return readNull(array)
     default:
-      throw new Error('Unknown type: ' + type)
+      throw new Error('Unknown type: ' + type + ' at offset ' + array.offset)
   }
 }
 
-function read(text) {
-  var keyAndText = readKey(text)
-  var result = readValue(keyAndText.leftText)
-  var obj = {}
-  obj[keyAndText.value] = result.value
-  return {
-    value: obj,
-    leftText: result.leftText
-  }
-}
-
-function unserializer(text) {
+function read (array) {
+  // Read key.
+  var key = readUntil(array, '|')
+  // Read value.
+  var value = readValue(array)
   var result = {}
-  var readResult = {
-    leftText: text
-  }
+  result[key] = value
+  return result
+}
+
+function unserializer (text) {
+  var result = {}
+  var array = Array.from(text)
+  array.offset = 0
   do {
-    readResult = read(readResult.leftText)
-    Object.assign(result, readResult.value)
+    try {
+      Object.assign(result, read(array))
+    } catch (err) {
+      err.message += ', Left text: ' + array.join('')
+      throw err
+    }
   }
-  while (readResult.leftText)
+  while (array.length)
   return result
 }
 
