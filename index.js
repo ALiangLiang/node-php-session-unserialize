@@ -11,6 +11,9 @@ function readKey(text) {
 
 function readType(text) {
   var index = text.indexOf(':')
+  // When type is N(null), it's like "N;". No ":".
+  if(index === -1)
+    index = text.indexOf(';')
   var type = text.substr(0, index)
   var leftText = text.substr(index + 1)
   //console.log('readType', leftText)
@@ -77,7 +80,7 @@ function readBoolean(text) {
 function readNull(text) {
   return {
     value: null,
-    leftText: text.substr(2)
+    leftText: text.substr(1)
   }
 }
 
@@ -189,7 +192,6 @@ function readValue(text) {
 function read(text) {
   var keyAndText = readKey(text)
   var result = readValue(keyAndText.leftText)
-  console.log(result.leftText)
   var obj = {}
   obj[keyAndText.value] = result.value
   return {
