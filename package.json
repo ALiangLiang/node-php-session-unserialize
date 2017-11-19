@@ -1,6 +1,6 @@
 {
   "name": "php-session-unserialize",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "For unserialize PHP session in redis into JSON",
   "main": "index.js",
   "scripts": {
