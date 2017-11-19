@@ -22,21 +22,23 @@ function readString (array) {
 }
 
 function readNumber (array) {
-  var number = Number(readUntil(array, ';'))
+  var numberString = readUntil(array, ';')
+  var number = Number(numberString)
   if (Number.isNaN(number)) {
-    throw new Error('Parse error: ' + number + ' is not a number.')
+    throw new Error('Parse error: "' + numberString + '" is not a number.')
   }
   // console.log('readNumber', leftText)
   return number
 }
 
 function readBoolean (array) {
-  var boolean = Number(readUntil(array, ';'))
-  if (Number.isNaN(boolean) || (boolean !== 0 && boolean !== 1)) {
-    throw new Error('Parse error: ' + boolean + ' is not a boolean number.')
+  var booleanString = readUntil(array, ';')
+  if (booleanString !== '0' && booleanString !== '1') {
+    throw new Error('Parse error: "' + booleanString + '" is not a boolean number.')
   }
+  var boolean = !!booleanString
   // console.log('readBoolean', leftText)
-  return !!boolean
+  return boolean
 }
 
 function readNull (array) {
@@ -125,7 +127,7 @@ function readValue (array) {
     case 'n': // n; null
       return readNull(array)
     default:
-      throw new Error('Unknown type: ' + type + ' at offset ' + array.offset)
+      throw new Error('Unknown type: "' + type + '" at offset ' + array.offset)
   }
 }
 
@@ -147,7 +149,7 @@ function unserializer (text) {
     try {
       Object.assign(result, read(array))
     } catch (err) {
-      err.message += ', Left text: ' + array.join('')
+      err.message += ', Left text: "' + array.join('') + '"'
       throw err
     }
   }

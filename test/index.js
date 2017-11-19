@@ -112,3 +112,31 @@ describe('real cases test', function () {
     done()
   })
 })
+
+
+describe('wrong cases test', function () {
+  it('wrong type of integer value', function (done) {
+    var expected = 'Parse error: "foo" is not a number., Left text: ""'
+    var result = function() {
+      unserialize('key|i:foo;')
+    }
+    expect(result).to.throw(expected);
+    done()
+  })
+  it('wrong type of boolean value', function (done) {
+    var expected = 'Parse error: "foo" is not a boolean number., Left text: ""'
+    var result = function() {
+      unserialize('key|b:foo;')
+    }
+    expect(result).to.throw(expected);
+    done()
+  })
+  it('unknown type', function (done) {
+    var expected = 'Unknown type: "z" at offset 6, Left text: "foo;"'
+    var result = function() {
+      unserialize('key|z:foo;')
+    }
+    expect(result).to.throw(expected);
+    done()
+  })
+})
