@@ -4,7 +4,7 @@
   "description": "For unserialize PHP session in redis into JSON",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test.js",
+    "test": "mocha test",
     "lint": "eslint --fix ."
   },
   "repository": {
