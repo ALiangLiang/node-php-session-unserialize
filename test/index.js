@@ -14,9 +14,15 @@ describe('single type cases test', function () {
     expect(result).to.deep.equal(expected)
     done()
   })
-  it('boolean', function (done) {
+  it('boolean true', function (done) {
     var expected = {key: true}
     var result = unserialize('key|b:1;')
+    expect(result).to.deep.equal(expected)
+    done()
+  })
+  it('boolean false', function (done) {
+    var expected = {key: false}
+    var result = unserialize('key|b:0;')
     expect(result).to.deep.equal(expected)
     done()
   })
