@@ -2,7 +2,7 @@ function readUntil (array, keywords) {
   if (typeof keywords === 'string') {
     keywords = [keywords]
   }
-  var value = ''
+  let value = ''
   while (array.length && keywords.indexOf(array[0]) === -1) {
     value += array.shift()
     array.offset += 1
@@ -15,15 +15,15 @@ function readUntil (array, keywords) {
 function readString (array) {
   readUntil(array, ':')
   readUntil(array, '"')
-  var string = readUntil(array, '"')
+  const string = readUntil(array, '"')
   readUntil(array, ';')
   // console.log('readString', leftText)
   return string
 }
 
 function readNumber (array) {
-  var numberString = readUntil(array, ';')
-  var number = Number(numberString)
+  const numberString = readUntil(array, ';')
+  const number = Number(numberString)
   if (Number.isNaN(number)) {
     throw new Error('Parse error: "' + numberString + '" is not a number.')
   }
@@ -32,7 +32,7 @@ function readNumber (array) {
 }
 
 function readBoolean (array) {
-  var booleanString = readUntil(array, ';')
+  const booleanString = readUntil(array, ';')
   if (booleanString !== '0' && booleanString !== '1') {
     throw new Error('Parse error: "' + booleanString + '" is not a boolean number.')
   }
@@ -45,13 +45,13 @@ function readNull (array) {
 }
 
 function readArray (array) {
-  var length = readUntil(array, ':')
-  var resultArray = []
+  const length = readUntil(array, ':')
+  const resultArray = []
   // Shift out first bracket.
   readUntil(array, '{')
-  for (var i = 0; i < length; i++) {
-    var key = readValue(array)
-    var value = readValue(array)
+  for (let i = 0; i < length; i++) {
+    const key = readValue(array)
+    const value = readValue(array)
     resultArray[key] = value
   }
   readUntil(array, '}')
@@ -64,18 +64,18 @@ function readObject (array) {
   readUntil(array, ':')
   // Get object name.
   readUntil(array, '"')
-  var resultObjectName = readUntil(array, '"')
+  const resultObjectName = readUntil(array, '"')
   readUntil(array, ':')
 
-  var resultObject = {}
-  var insideResultObject = resultObject[resultObjectName] = {}
+  const resultObject = {}
+  const insideResultObject = resultObject[resultObjectName] = {}
   // Get object length.
-  var length = readUntil(array, ':')
+  const length = readUntil(array, ':')
   // Shift out first bracket.
   readUntil(array, '{')
-  for (var i = 0; i < length; i++) {
-    var key = readValue(array)
-    var value = readValue(array)
+  for (let i = 0; i < length; i++) {
+    const key = readValue(array)
+    const value = readValue(array)
     insideResultObject[key] = value
   }
   readUntil(array, '}')
@@ -88,17 +88,17 @@ function readClass (array) {
   readUntil(array, ':')
   // Get class name.
   readUntil(array, '"')
-  var resultClassName = readUntil(array, '"')
+  const resultClassName = readUntil(array, '"')
   readUntil(array, ':')
 
-  var resultClass = {}
-  var insideResultClass = resultClass[resultClassName] = []
+  const resultClass = {}
+  const insideResultClass = resultClass[resultClassName] = []
   // Get class length.
-  var length = readUntil(array, ':')
+  const length = readUntil(array, ':')
   // Shift out first bracket.
   readUntil(array, '{')
-  for (var i = 0; i < length; i++) {
-    var value = readValue(array)
+  for (let i = 0; i < length; i++) {
+    const value = readValue(array)
     insideResultClass.push(value)
   }
   readUntil(array, '}')
@@ -107,7 +107,7 @@ function readClass (array) {
 }
 
 function readValue (array) {
-  var type = readUntil(array, [':', ';'])
+  const type = readUntil(array, [':', ';'])
   switch (type.toLowerCase()) {
     case 's': // s:len<string>:"<string>";
       return readString(array)
@@ -132,17 +132,17 @@ function readValue (array) {
 
 function read (array) {
   // Read key.
-  var key = readUntil(array, '|')
+  const key = readUntil(array, '|')
   // Read value.
-  var value = readValue(array)
-  var result = {}
+  const value = readValue(array)
+  const result = {}
   result[key] = value
   return result
 }
 
 function unserializer (text) {
-  var result = {}
-  var array = Array.from(text)
+  const result = {}
+  const array = Array.from(text)
   array.offset = 0
   do {
     try {
