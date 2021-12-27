@@ -6,8 +6,8 @@
   "scripts": {
     "test": "mocha --covignore .covignore test/",
     "lint": "eslint --fix .",
-    "cover": "./node_modules/.bin/istanbul cover _mocha -- recursive test/",
-    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
+    "cover": "nyc mocha",
+    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
@@ -37,17 +37,17 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "chai": "^4.1.2",
-    "coveralls": "^3.0.0",
-    "eslint": "^4.11.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-mocha": "^4.11.0",
-    "eslint-plugin-node": "^5.2.1",
-    "eslint-plugin-promise": "^3.6.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "istanbul": "^0.4.5",
-    "mocha": "^4.0.1",
-    "mocha-lcov-reporter": "^1.3.0"
+    "chai": "^4.3.4",
+    "coveralls": "^3.1.1",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-mocha": "^10.0.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-standard": "^5.0.0",
+    "mocha": "^9.1.3",
+    "mocha-lcov-reporter": "^1.3.0",
+    "nyc": "^15.1.0"
   }
 }
