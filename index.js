@@ -36,9 +36,8 @@ function readBoolean (array) {
   if (booleanString !== '0' && booleanString !== '1') {
     throw new Error('Parse error: "' + booleanString + '" is not a boolean number.')
   }
-  var boolean = !!+booleanString
-  // console.log('readBoolean', leftText)
-  return boolean
+
+  return !!+booleanString
 }
 
 function readNull (array) {
