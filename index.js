@@ -37,7 +37,7 @@ function readBoolean (array) {
     throw new Error('Parse error: "' + booleanString + '" is not a boolean number.')
   }
 
-  return booleanString === '1'
+  return !!+booleanString
 }
 
 function readNull (array) {
