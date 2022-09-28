@@ -7,7 +7,8 @@
     "test": "mocha --covignore .covignore test/",
     "lint": "eslint --fix .",
     "cover": "nyc mocha",
-    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
+    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls",
+    "tsc": "tsc"
   },
   "repository": {
     "type": "git",
@@ -48,6 +49,7 @@
     "eslint-plugin-standard": "^5.0.0",
     "mocha": "^9.1.3",
     "mocha-lcov-reporter": "^1.3.0",
-    "nyc": "^15.1.0"
+    "nyc": "^15.1.0",
+    "typescript": "^4.8.4"
   }
 }

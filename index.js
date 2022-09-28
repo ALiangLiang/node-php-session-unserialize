@@ -140,6 +140,11 @@ function read (array) {
   return result
 }
 
+/**
+ * Unserialize a PHP session string to an object
+ * @param {string} text PHP session string
+ * @returns {} Session object
+ */
 function unserializer (text) {
   const result = {}
   const array = Array.from(text)
